@@ -1,0 +1,216 @@
+{% extends "emergencias/base.html" %}
+{% load humanize static %}
+
+{% block content %}
+<header class="mb-4">
+  <h1 class="h3 fw-bold mb-1">¿Qué emergencias ha vivido tu territorio?</h1>
+  <p class="text-secondary mb-0">
+    Consulta el historial de emergencias reportadas a la UNGRD por departamento y municipio.
+    {% if dataset_summary.fecha_min %}
+      Periodo disponible: {{ dataset_summary.fecha_min|date:"d/m/Y" }} – {{ dataset_summary.fecha_max|date:"d/m/Y" }}
+      ({{ dataset_summary.total_eventos|intcomma }} registros).
+    {% endif %}
+  </p>
+</header>
+
+{% if data_error %}
+  <div class="alert alert-danger" role="alert">
+    <h2 class="h6 alert-heading"><i class="bi bi-x-octagon"></i> No se pudieron cargar los datos</h2>
+    <p class="mb-0">{{ data_error }}</p>
+  </div>
+{% else %}
+
+  {% for w in data_warnings %}
+    <div class="alert alert-warning py-2 small" role="status"><i class="bi bi-info-circle"></i> {{ w }}</div>
+  {% endfor %}
+
+  <section class="card shadow-sm mb-4" aria-labelledby="filtro-titulo">
+    <div class="card-body">
+      <h2 id="filtro-titulo" class="h6 text-uppercase text-secondary mb-3">Filtrar emergencias</h2>
+      <form method="get" action="{% url 'emergencias:index' %}" class="row g-3 align-items-end" novalidate>
+        <div class="col-md-5">
+          <label for="{{ form.departamento.id_for_label }}" class="form-label">{{ form.departamento.label }}</label>
+          {{ form.departamento }}
+          {% for e in form.departamento.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-5">
+          <label for="{{ form.municipio.id_for_label }}" class="form-label">{{ form.municipio.label }}</label>
+          {{ form.municipio }}
+          {% for e in form.municipio.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-2 d-grid">
+          <button type="submit" name="consultar" value="1" class="btn btn-primary">
+            <i class="bi bi-search"></i> Consultar
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  {% if submitted and form.errors %}
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-exclamation-circle"></i> Revisa los filtros: la selección no es válida.
+    </div>
+  {% endif %}
+
+  {% if no_results %}
+    <div class="alert alert-info d-flex gap-2 align-items-start" role="status">
+      <i class="bi bi-search fs-5"></i>
+      <div>
+        <strong>{{ no_results }}</strong><br>
+        <span class="small">Prueba con otro municipio o elige «Todos los municipios».</span>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if summary %}
+    <section aria-labelledby="resultado-titulo">
+      <h2 id="resultado-titulo" class="h5 mb-3">
+        Resultados:
+        {% if filtro.municipio %}{{ filtro.municipio|title }}, {% endif %}
+        {% if filtro.departamento %}{{ filtro.departamento|title }}{% else %}todo el país{% endif %}
+        <span class="text-secondary fw-normal small">
+          ({{ summary.fecha_min|date:"d/m/Y" }} – {{ summary.fecha_max|date:"d/m/Y" }})
+        </span>
+      </h2>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+          <div class="card kpi h-100"><div class="card-body">
+            <div class="kpi-label">Total de eventos</div>
+            <div class="kpi-value">{{ summary.total_eventos|intcomma }}</div>
+          </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card kpi h-100"><div class="card-body">
+            <div class="kpi-label">Personas afectadas</div>
+            <div class="kpi-value">{{ summary.total_personas|intcomma }}</div>
+          </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card kpi h-100"><div class="card-body">
+            <div class="kpi-label">Familias afectadas</div>
+            <div class="kpi-value">{{ summary.total_familias|intcomma }}</div>
+          </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card kpi h-100"><div class="card-body">
+            <div class="kpi-label">Fallecidos · Heridos</div>
+            <div class="kpi-value">{{ summary.total_fallecidos|intcomma }} · {{ summary.total_heridos|intcomma }}</div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-lg-5">
+          <div class="card h-100 shadow-sm"><div class="card-body">
+            <h3 class="h6 text-uppercase text-secondary">Top 5 tipos de evento</h3>
+            <ol class="list-group list-group-numbered list-group-flush">
+              {% for t in top_eventos %}
+                <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-semibold">{{ t.evento|title }}</div>
+                    <span class="small text-secondary">{{ t.personas|intcomma }} personas afectadas</span>
+                  </div>
+                  <span class="badge text-bg-primary rounded-pill">{{ t.cantidad|intcomma }} · {{ t.porcentaje|floatformat:1 }}%</span>
+                </li>
+              {% endfor %}
+            </ol>
+          </div></div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card h-100 shadow-sm"><div class="card-body">
+            <h3 class="h6 text-uppercase text-secondary">Estadística de personas afectadas por evento</h3>
+            <div class="row row-cols-2 row-cols-md-3 g-2 small stats">
+              <div><span>Promedio</span><strong>{{ summary.promedio_personas|floatformat:1 }}</strong></div>
+              <div><span>Mediana</span><strong>{{ summary.mediana_personas|floatformat:0 }}</strong></div>
+              <div><span>Desv. estándar</span><strong>{{ summary.desviacion_personas|floatformat:1 }}</strong></div>
+              <div><span>Percentil 90</span><strong>{{ summary.p90_personas|floatformat:0 }}</strong></div>
+              <div><span>Máximo</span><strong>{{ summary.max_personas|intcomma }}</strong></div>
+              <div><span>Eventos con afectados</span><strong>{{ summary.pct_eventos_con_afectados|floatformat:1 }}%</strong></div>
+            </div>
+            {% if summary.evento_mayor_impacto %}
+              {% with e=summary.evento_mayor_impacto %}
+              <p class="small mt-3 mb-0 text-secondary">
+                <i class="bi bi-lightning-charge text-danger"></i>
+                Evento de mayor impacto: <strong class="text-body">{{ e.evento|title }}</strong> en
+                {{ e.municipio|title }} ({{ e.departamento|title }}), {{ e.fecha|date:"d/m/Y" }},
+                con {{ e.personas|intcomma }} personas afectadas.
+              </p>
+              {% endwith %}
+            {% endif %}
+            <p class="small mt-2 mb-0 text-secondary">
+              Cuando la media es mucho mayor que la mediana, unos pocos eventos grandes concentran la mayoría de afectados.
+            </p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        {% if chart_top %}
+          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+            <img class="img-fluid" src="data:image/png;base64,{{ chart_top }}" alt="Gráfico de barras con los tipos de evento más frecuentes">
+          </div></figure></div>
+        {% endif %}
+        {% if chart_mensual %}
+          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+            <img class="img-fluid" src="data:image/png;base64,{{ chart_mensual }}" alt="Gráfico de eventos y personas afectadas por mes">
+          </div></figure></div>
+        {% endif %}
+        {% if chart_distribucion %}
+          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+            <img class="img-fluid" src="data:image/png;base64,{{ chart_distribucion }}" alt="Histograma de personas afectadas por evento">
+          </div></figure></div>
+        {% endif %}
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="h6 text-uppercase text-secondary">
+            Eventos encontrados
+            {% if summary.total_eventos > max_rows %}
+              <span class="fw-normal text-lowercase">(se muestran los {{ max_rows }} más recientes de {{ summary.total_eventos|intcomma }})</span>
+            {% endif %}
+          </h3>
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Evento</th>
+                  <th scope="col">Departamento</th>
+                  <th scope="col">Municipio</th>
+                  <th scope="col" class="text-end">Personas afectadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for e in eventos %}
+                  <tr>
+                    <td class="text-nowrap">{{ e.fecha|date:"d/m/Y"|default:"Sin fecha" }}</td>
+                    <td>{{ e.evento|title }}</td>
+                    <td>{{ e.departamento|title }}</td>
+                    <td>{{ e.municipio|title }}</td>
+                    <td class="text-end">{{ e.personas|intcomma }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% elif not submitted %}
+    <div class="text-center text-secondary py-5">
+      <i class="bi bi-geo-alt fs-1"></i>
+      <p class="mt-2 mb-0">Elige un departamento (y si quieres un municipio) y pulsa <strong>Consultar</strong>.</p>
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if municipios_por_dep %}
+  {{ municipios_por_dep|json_script:"municipios-data" }}
+  <script src="{% static 'emergencias/filtros.js' %}"></script>
+{% endif %}
+{% endblock %}

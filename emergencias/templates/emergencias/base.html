@@ -1,0 +1,56 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}RiesgoVivo{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{% static 'emergencias/styles.css' %}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <nav class="navbar bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% url 'emergencias:index' %}">
+        <i class="bi bi-shield-exclamation text-danger"></i> RiesgoVivo
+      </a>
+      <span class="navbar-text small d-none d-md-inline">
+        Historial de emergencias de tu territorio · Datos abiertos UNGRD
+      </span>
+    </div>
+  </nav>
+
+  <main class="container py-4 flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-top bg-white py-4 mt-4">
+    <div class="container small text-secondary">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h2 class="h6 text-body"><i class="bi bi-database"></i> Fuente de los datos</h2>
+          <p class="mb-1">
+            Unidad Nacional para la Gestión del Riesgo de Desastres (UNGRD), conjunto
+            <strong>Emergencias UNGRD V2</strong>, publicado en el Portal de Datos Abiertos de Colombia.
+          </p>
+          <a class="text-break" href="{{ source_url }}" target="_blank" rel="noopener">{{ source_url }}</a>
+          <p class="mt-2 mb-0">
+            Acceso por archivo CSV descargado (Opción B): <code>data/emergencias_ungrd.csv</code>.
+            Se usa el archivo completo, no una muestra.
+          </p>
+        </div>
+        <div class="col-md-6">
+          <h2 class="h6 text-body"><i class="bi bi-exclamation-triangle"></i> Limitaciones</h2>
+          <ul class="mb-0 ps-3">
+            <li>Solo incluye emergencias reportadas a la UNGRD; puede haber subregistro de eventos pequeños.</li>
+            <li>Las cifras dependen de los reportes de los consejos territoriales y pueden corregirse después.</li>
+            <li>El archivo refleja el periodo publicado al momento de la descarga; no se actualiza en tiempo real.</li>
+            <li>Valores vacíos o no numéricos se cuentan como 0. Es una consulta histórica, no un pronóstico de riesgo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
