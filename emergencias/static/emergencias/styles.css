@@ -6,3 +6,4 @@ body { background: #f5f7fa; }
 .stats span { color: #6c757d; }
 .stats strong { font-size: 1.1rem; }
 figure img { width: 100%; height: auto; }
+.chart-box { position: relative; height: 280px; }

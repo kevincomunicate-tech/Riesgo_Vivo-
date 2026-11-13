@@ -216,6 +216,45 @@ def monthly_trend(df: pd.DataFrame) -> pd.DataFrame:
     return monthly
 
 
+MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+
+
+def chart_data(df: pd.DataFrame, top: list[dict] | None = None) -> dict:
+    """Series para los gráficos interactivos (Chart.js), calculadas desde el CSV filtrado."""
+    top = top if top is not None else top_eventos(df)
+    data: dict = {
+        "top": {
+            "labels": [t["evento"].title() for t in top],
+            "keys": [t["evento"] for t in top],
+            "eventos": [t["cantidad"] for t in top],
+            "personas": [t["personas"] for t in top],
+        },
+        "mensual": {"labels": [], "eventos": [], "personas": []},
+        "distribucion": {"labels": [], "eventos": []},
+    }
+
+    monthly = monthly_trend(df)
+    if not monthly.empty:
+        multi_year = monthly["mes"].dt.year.nunique() > 1
+        data["mensual"] = {
+            "labels": [
+                f"{MESES[m.month - 1]} {m.year}" if multi_year else MESES[m.month - 1]
+                for m in monthly["mes"]
+            ],
+            "eventos": [int(v) for v in monthly["eventos"]],
+            "personas": [int(v) for v in monthly["personas"]],
+        }
+
+    # Histograma de personas afectadas por evento en rangos crecientes.
+    personas = df["PERSONAS"].to_numpy()
+    if len(personas):
+        edges = [0, 1, 10, 50, 100, 500, 1000, np.inf]
+        counts, _ = np.histogram(personas, bins=edges)
+        labels = ["0", "1–9", "10–49", "50–99", "100–499", "500–999", "1.000 o más"]
+        data["distribucion"] = {"labels": labels, "eventos": [int(c) for c in counts]}
+    return data
+
+
 def events_table(df: pd.DataFrame, limit: int | None = None) -> list[dict]:
     """Eventos ordenados del más reciente al más antiguo, listos para la plantilla."""
     limit = limit or settings.RIESGOVIVO_MAX_TABLE_ROWS

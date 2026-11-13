@@ -146,22 +146,28 @@
         </div>
       </div>
 
-      <div class="row g-3 mb-4">
-        {% if chart_top %}
-          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
-            <img class="img-fluid" src="data:image/png;base64,{{ chart_top }}" alt="Gráfico de barras con los tipos de evento más frecuentes">
-          </div></figure></div>
-        {% endif %}
-        {% if chart_mensual %}
-          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
-            <img class="img-fluid" src="data:image/png;base64,{{ chart_mensual }}" alt="Gráfico de eventos y personas afectadas por mes">
-          </div></figure></div>
-        {% endif %}
-        {% if chart_distribucion %}
-          <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
-            <img class="img-fluid" src="data:image/png;base64,{{ chart_distribucion }}" alt="Histograma de personas afectadas por evento">
-          </div></figure></div>
-        {% endif %}
+      <div class="row g-3 mb-4" id="graficos">
+        <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 class="h6 text-uppercase text-secondary mb-0">Tipos de evento más frecuentes</h3>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Métrica del gráfico">
+              <button type="button" class="btn btn-outline-primary active" data-metrica="eventos">Eventos</button>
+              <button type="button" class="btn btn-outline-primary" data-metrica="personas">Personas</button>
+            </div>
+          </div>
+          <div class="chart-box"><canvas id="chart-top" aria-label="Gráfico de barras de los tipos de evento más frecuentes" role="img"></canvas></div>
+          <figcaption class="small text-secondary mt-2">Haz clic en una barra para filtrar la tabla de eventos por ese tipo (otro clic lo quita).</figcaption>
+        </div></figure></div>
+        <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+          <h3 class="h6 text-uppercase text-secondary mb-2">Evolución mensual</h3>
+          <div class="chart-box"><canvas id="chart-mensual" aria-label="Eventos y personas afectadas por mes" role="img"></canvas></div>
+          <figcaption class="small text-secondary mt-2">Pulsa la leyenda para mostrar u ocultar cada serie.</figcaption>
+        </div></figure></div>
+        <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
+          <h3 class="h6 text-uppercase text-secondary mb-2">Distribución del impacto</h3>
+          <div class="chart-box"><canvas id="chart-distribucion" aria-label="Número de eventos según personas afectadas" role="img"></canvas></div>
+          <figcaption class="small text-secondary mt-2">Cuántos eventos afectaron a 0, 1–9, 10–49… personas.</figcaption>
+        </div></figure></div>
       </div>
 
       <div class="card shadow-sm">
@@ -172,6 +178,11 @@
               <span class="fw-normal text-lowercase">(se muestran los {{ max_rows }} más recientes de {{ summary.total_eventos|intcomma }})</span>
             {% endif %}
           </h3>
+          <div id="filtro-tabla" class="alert alert-primary py-2 small d-none" role="status">
+            Mostrando solo: <strong id="filtro-tabla-evento"></strong>
+            {% if summary.total_eventos > max_rows %}(entre los {{ max_rows }} eventos más recientes de la tabla){% endif %}
+            <button type="button" class="btn btn-sm btn-link p-0 ms-2" id="quitar-filtro-tabla">Quitar filtro</button>
+          </div>
           <div class="table-responsive">
             <table class="table table-sm table-hover align-middle mb-0">
               <thead class="table-light">
@@ -185,7 +196,7 @@
               </thead>
               <tbody>
                 {% for e in eventos %}
-                  <tr>
+                  <tr data-evento="{{ e.evento }}">
                     <td class="text-nowrap">{{ e.fecha|date:"d/m/Y"|default:"Sin fecha" }}</td>
                     <td>{{ e.evento|title }}</td>
                     <td>{{ e.departamento|title }}</td>
@@ -212,5 +223,10 @@
 {% if municipios_por_dep %}
   {{ municipios_por_dep|json_script:"municipios-data" }}
   <script src="{% static 'emergencias/filtros.js' %}"></script>
+{% endif %}
+{% if chart_data %}
+  {{ chart_data|json_script:"chart-data" }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="{% static 'emergencias/graficos.js' %}"></script>
 {% endif %}
 {% endblock %}

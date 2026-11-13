@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from django.shortcuts import render
 
-from . import charts, services
+from . import services
 from .forms import FiltroEmergenciasForm
 
 logger = logging.getLogger(__name__)
@@ -60,8 +60,6 @@ def index(request):
         summary=services.build_summary(filtered),
         top_eventos=top,
         eventos=services.events_table(filtered),
-        chart_top=charts.chart_top_eventos(top),
-        chart_mensual=charts.chart_tendencia_mensual(services.monthly_trend(filtered)),
-        chart_distribucion=charts.chart_distribucion_personas(filtered),
+        chart_data=services.chart_data(filtered, top),
     )
     return render(request, "emergencias/index.html", context)

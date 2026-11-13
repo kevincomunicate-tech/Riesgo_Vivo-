@@ -11,7 +11,7 @@ from unittest import mock
 from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
 
-from . import charts, services
+from . import services
 
 CSV_OK = """FECHA,DEPARTAMENTO,MUNICIPIO,EVENTO,FALLECIDOS,HERIDOS,DESAPARECIDOS,PERSONAS,FAMILIAS,VIVIENDAS DESTRUIDAS
 01/15/2025 12:00:00 AM,ANTIOQUIA,MEDELLIN,INUNDACION,0,1,0,100,25,2
@@ -66,7 +66,7 @@ class ServicesTests(TempCsvMixin, SimpleTestCase):
         self.assertTrue(vacio.empty)
         self.assertEqual(services.build_summary(vacio)["total_eventos"], 0)
         self.assertEqual(services.top_eventos(vacio), [])
-        self.assertIsNone(charts.chart_top_eventos([]))
+        self.assertEqual(services.chart_data(vacio)["mensual"]["labels"], [])
 
     def test_archivo_no_encontrado(self):
         with self.assertRaisesMessage(services.DataSourceError, "No se encontró"):
@@ -76,15 +76,16 @@ class ServicesTests(TempCsvMixin, SimpleTestCase):
         with self.assertRaisesMessage(services.DataSourceError, "MUNICIPIO"):
             services.load_dataset(self.write_csv(CSV_SIN_COLUMNAS))
 
-    def test_graficos_generan_png(self):
+    def test_datos_de_graficos(self):
         df, _ = services.load_dataset(self.write_csv(CSV_OK))
-        top = services.top_eventos(df)
-        for img in (
-            charts.chart_top_eventos(top),
-            charts.chart_tendencia_mensual(services.monthly_trend(df)),
-            charts.chart_distribucion_personas(df),
-        ):
-            self.assertTrue(img.startswith("iVBORw0KGgo"))  # firma PNG en base64
+        data = services.chart_data(df)
+        self.assertEqual(data["top"]["keys"][0], "INUNDACION")
+        self.assertEqual(data["top"]["eventos"][0], 3)
+        self.assertEqual(data["mensual"]["labels"], ["Ene", "Feb", "Mar", "Abr"])
+        self.assertEqual(data["mensual"]["eventos"], [1, 1, 2, 1])
+        # Distribución: 0 personas (1), 10–49 (12 y 40), 100–499 (100), 500–999 (500).
+        self.assertEqual(data["distribucion"]["eventos"], [1, 0, 2, 0, 1, 1, 0])
+        self.assertEqual(sum(data["distribucion"]["eventos"]), len(df))
 
 
 class IndexViewTests(TempCsvMixin, SimpleTestCase):
@@ -107,7 +108,9 @@ class IndexViewTests(TempCsvMixin, SimpleTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context["summary"]["total_eventos"], 3)
         self.assertContains(resp, "Inundacion")
-        self.assertContains(resp, "data:image/png;base64,")
+        self.assertContains(resp, 'id="chart-data"')
+        self.assertContains(resp, 'id="chart-top"')
+        self.assertEqual(resp.context["chart_data"]["top"]["eventos"], [2, 1])
 
     def test_municipio_de_otro_departamento_no_rompe(self):
         resp = self.get(

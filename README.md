@@ -77,8 +77,9 @@ Como funcionario municipal, quiero ver estadísticas y gráficos del resultado f
 
 **Criterios de aceptación:**
 - Se muestran promedio, mediana, desviación estándar, percentil 90 y máximo de personas afectadas por evento.
-- Se muestran gráficos generados con `matplotlib.pyplot`: top de eventos, evolución mensual y distribución de personas afectadas.
-- Si no hay datos para un gráfico, el gráfico no se muestra y la página no falla.
+- Se muestran gráficos **interactivos** (no imágenes) calculados desde el CSV filtrado: top de eventos, evolución mensual y distribución de personas afectadas.
+- Los gráficos tienen tooltips, leyenda para mostrar/ocultar series, cambio de métrica (eventos/personas) y clic en una barra para filtrar la tabla.
+- Si no hay datos, el gráfico queda vacío y la página no falla.
 
 **PBI-4 — Prioridad: Low (fuera del Sprint)**
 Como usuario, quiero comparar dos municipios lado a lado, para saber cuál ha tenido más afectación.
@@ -95,7 +96,7 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 | `services.py`: lectura con pandas, limpieza, validación de columnas, filtrado | 1 | Tests de carga, archivo ausente y columnas faltantes |
 | Formulario Django + select dependiente (`filtros.js`) | 1 | Prueba manual en navegador + test de combinación inválida |
 | Resumen numérico y top 5 de eventos | 2 | Test de totales y top con CSV de prueba |
-| Estadística descriptiva (numpy) y gráficos (`charts.py`, pyplot) | 3 | Test que verifica que los gráficos generan PNG |
+| Estadística descriptiva (numpy), datos de gráficos (`services.chart_data`) y gráficos interactivos (`graficos.js`, Chart.js) | 3 | Test de los datos de los gráficos + prueba manual en navegador |
 | Plantillas Bootstrap 5, fuente y limitaciones visibles | 1, 2 | Revisión visual en navegador |
 | README, `requirements.txt`, `.gitignore`, tests | — | `python manage.py test` |
 
@@ -172,17 +173,16 @@ python manage.py test
 │   └── emergencias_ungrd.csv      # datos reales UNGRD (Opción B)
 ├── config/                        # configuración Django (settings, urls, wsgi, asgi)
 └── emergencias/                   # aplicación principal
-    ├── services.py                # lectura, limpieza, filtrado y estadísticas (pandas + numpy)
-    ├── charts.py                  # gráficos con matplotlib.pyplot (PNG en base64)
+    ├── services.py                # lectura, limpieza, filtrado, estadísticas y datos de gráficos (pandas + numpy)
     ├── forms.py                   # formulario de filtros y validación
     ├── views.py                   # recibe la solicitud y prepara la respuesta
     ├── urls.py
     ├── tests.py                   # 12 pruebas automatizadas
     ├── templates/emergencias/     # base.html, index.html (Bootstrap 5 vía CDN)
-    └── static/emergencias/        # styles.css, filtros.js (select dependiente)
+    └── static/emergencias/        # styles.css, filtros.js (select dependiente), graficos.js (Chart.js)
 ```
 
-**Librerías:** Django (web), pandas (lectura y filtrado del CSV), numpy (estadística descriptiva), matplotlib/pyplot (gráficos, backend `Agg` sin ventana).
+**Librerías:** Django (web), pandas (lectura y filtrado del CSV), numpy (estadística descriptiva e histograma). Gráficos interactivos con Chart.js 4.4.1 vía CDN: pandas calcula las series en el servidor y se envían a la página con `json_script`, así cada gráfico refleja exactamente el filtro consultado.
 
 **Manejo de errores:** archivo no encontrado, CSV vacío o mal formado y columnas requeridas faltantes se muestran como un mensaje claro en la página (sin error 500). Las columnas opcionales que falten se completan con 0 y se avisa.
 
@@ -193,13 +193,14 @@ python manage.py test
 | Fecha | Verificación | Resultado |
 |---|---|---|
 | 13/11/2026 | `python manage.py check` | Sin problemas (0 issues) |
-| 13/11/2026 | `python manage.py test` (Python 3.14.10, Django 5.2.19, pandas 3.1.1, matplotlib 3.11.2) | **12 pruebas, OK** |
+| 13/11/2026 | `python manage.py test` (Python 3.14.10, Django 5.2.19, pandas 3.1.1, numpy 2.5.4) | **12 pruebas, OK** |
 | 13/11/2026 | Manual: Antioquia → Medellín → Consultar | 21 eventos, 1.992 personas afectadas, 575 familias; top 5, estadística, gráficos y tabla visibles |
 | 13/11/2026 | Manual: al elegir Chocó, la lista de municipios se reduce a los de Chocó | OK (32 municipios + “Todos”) |
 | 13/11/2026 | Manual: departamento inexistente en la URL | Página carga (200) con aviso “Revisa los filtros” |
 | 13/11/2026 | Manual: consulta sin filtros (todo el país) | 6.506 eventos |
+| 13/11/2026 | Manual: Antioquia → gráficos interactivos | 3 gráficos Chart.js con tooltips; clic en “Movimiento en masa” filtra la tabla a ese evento y resalta la barra |
 
-Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, generación de gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, mensaje de sin resultados y error controlado sin archivo.
+Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, mensaje de sin resultados y error controlado sin archivo.
 
 ---
 
