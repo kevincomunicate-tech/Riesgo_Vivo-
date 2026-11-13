@@ -117,7 +117,7 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 ## 3. Cómo instalar y ejecutar el proyecto
 
 ### Requisitos previos
-- Python 3.10 o superior (probado con Python 3.14.10)
+- Python 3.11 o superior (pandas 3.1 lo exige; probado con Python 3.14.10)
 - pip
 - Git (opcional pero recomendado)
 
@@ -169,6 +169,7 @@ python manage.py test
 
 ```
 ├── manage.py
+├── iniciar.bat                    # iniciador para Windows (doble clic)
 ├── requirements.txt
 ├── .gitignore
 ├── data/
@@ -180,11 +181,12 @@ python manage.py test
     ├── views.py                   # recibe la solicitud y prepara la respuesta
     ├── urls.py
     ├── tests.py                   # 12 pruebas automatizadas
-    ├── templates/emergencias/     # base.html, index.html (Bootstrap 5 vía CDN)
+    ├── templates/emergencias/     # base.html, index.html (Bootstrap 5, archivos locales)
     └── static/emergencias/        # styles.css, filtros.js (select dependiente), graficos.js (Chart.js)
+        └── vendor/                # Bootstrap 5.3.3, Bootstrap Icons 1.11.3 y Chart.js 4.4.1 (locales, funciona sin internet)
 ```
 
-**Librerías:** Django (web), pandas (lectura y filtrado del CSV), numpy (estadística descriptiva e histograma). Gráficos interactivos con Chart.js 4.4.1 vía CDN: pandas calcula las series en el servidor y se envían a la página con `json_script`, así cada gráfico refleja exactamente el filtro consultado.
+**Librerías:** Django (web), pandas (lectura y filtrado del CSV), numpy (estadística descriptiva e histograma). Gráficos interactivos con Chart.js 4.4.1 (incluido en `static/`, sin depender de internet): pandas calcula las series en el servidor y se envían a la página con `json_script`, así cada gráfico refleja exactamente el filtro consultado.
 
 **Manejo de errores:** archivo no encontrado, CSV vacío o mal formado y columnas requeridas faltantes se muestran como un mensaje claro en la página (sin error 500). Las columnas opcionales que falten se completan con 0 y se avisa.
 
@@ -201,6 +203,9 @@ python manage.py test
 | 13/11/2026 | Manual: departamento inexistente en la URL | Página carga (200) con aviso “Revisa los filtros” |
 | 13/11/2026 | Manual: consulta sin filtros (todo el país) | 6.506 eventos |
 | 13/11/2026 | Manual: Antioquia → gráficos interactivos | 3 gráficos Chart.js con tooltips; clic en “Movimiento en masa” filtra la tabla a ese evento y resalta la barra |
+| 13/11/2026 | `iniciar.bat` (doble clic): crea `.venv`, instala dependencias y arranca el servidor | OK: la app responde en http://127.0.0.1:8000/ |
+| 13/11/2026 | `pip install -r requirements.txt` con versiones fijadas + `python manage.py test` dentro de `.venv` | Instalación sin errores; 12 pruebas OK |
+| 13/11/2026 | Página sin recursos externos (Bootstrap, íconos y Chart.js servidos desde `static/`) | 0 recursos externos; 3 gráficos e íconos cargan |
 
 Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, mensaje de sin resultados y error controlado sin archivo.
 
