@@ -30,6 +30,13 @@ Las comunidades, juntas de acción comunal y funcionarios municipales tienen acc
 - **Campos relevantes utilizados:** FECHA, DEPARTAMENTO, MUNICIPIO, EVENTO, FALLECIDOS, HERIDOS, DESAPARECIDOS, PERSONAS, FAMILIAS, VIVIENDAS DESTRUIDAS
 - **Modalidad de acceso:** Opción B — archivo CSV descargado del portal el 13/11/2026 (`data/emergencias_ungrd.csv`). Se usa el **archivo completo, no una muestra**.
 
+### Fuentes evaluadas
+Durante el descubrimiento **solo se evaluó un conjunto de datos** (Emergencias UNGRD V2). No se compararon fuentes candidatas alternativas, como pedía la Fase 1 del reto; se reconoce como una debilidad del descubrimiento. Se eligió este conjunto porque:
+- Lo publica la entidad nacional responsable de la gestión del riesgo (UNGRD).
+- Tiene cobertura nacional a nivel de municipio, que es justo el filtro que necesita el usuario.
+- Incluye las variables de impacto necesarias (personas, familias, fallecidos, heridos, viviendas).
+- Se puede descargar completo en CSV (6.506 registros), sin depender de la API durante la demo.
+
 ### Funcionalidad principal
 Permitir al usuario filtrar emergencias por departamento y municipio, y visualizar un resumen claro del historial (cantidad de eventos, personas y familias afectadas, tipos de eventos más frecuentes).
 
@@ -99,6 +106,15 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 | Estadística descriptiva (numpy), datos de gráficos (`services.chart_data`) y gráficos interactivos (`graficos.js`, Chart.js) | 3 | Test de los datos de los gráficos + prueba manual en navegador |
 | Plantillas Bootstrap 5, fuente y limitaciones visibles | 1, 2 | Revisión visual en navegador |
 | README, `requirements.txt`, `.gitignore`, tests | — | `python manage.py test` |
+
+**Responsables (según la evidencia en GitHub):**
+
+| Integrante | Aporte registrado |
+|---|---|
+| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6 |
+| Felipe Andrés Navarrete Calderón | Implementación en la rama `feature/emergency-filter` (proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador) y apertura del PR #1 |
+| Pendiente | Revisión del PR #1 por un integrante distinto al autor |
+
 
 ### Definition of Done (DoD)
 - Django inicia sin errores bloqueantes.
