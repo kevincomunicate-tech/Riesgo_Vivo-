@@ -154,6 +154,8 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 
 6. Abrir http://127.0.0.1:8000/ en el navegador.
 
+> **Atajo en Windows:** doble clic en `iniciar.bat` (crea el entorno, instala dependencias, inicia el servidor y abre el navegador).
+
 > No se necesita `migrate`: la aplicación no usa base de datos. Django procesa el CSV directamente con pandas.
 
 ### Ejecutar las pruebas
