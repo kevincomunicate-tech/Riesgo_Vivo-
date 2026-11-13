@@ -1,0 +1,9 @@
+body { background: #f5f7fa; }
+.kpi { border: 0; border-left: 4px solid #0d6efd; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.kpi-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #6c757d; }
+.kpi-value { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
+.stats > div { display: flex; flex-direction: column; }
+.stats span { color: #6c757d; }
+.stats strong { font-size: 1.1rem; }
+figure img { width: 100%; height: auto; }
+.chart-box { position: relative; height: 280px; }
