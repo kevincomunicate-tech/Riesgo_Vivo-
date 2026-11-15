@@ -104,10 +104,13 @@
       <div class="row g-3 mb-4">
         <div class="col-lg-5">
           <div class="card h-100 shadow-sm"><div class="card-body">
-            <h3 class="h6 text-uppercase text-secondary">Top 5 tipos de evento</h3>
+            <h3 class="h6 text-uppercase text-secondary mb-1">Top 5 tipos de evento</h3>
+            <p class="small text-primary mb-2"><i class="bi bi-hand-index-thumb"></i> Haz clic en un evento para ver solo esos registros en la tabla.</p>
             <ol class="list-group list-group-numbered list-group-flush">
               {% for t in top_eventos %}
-                <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-start px-2 top-item"
+                    role="button" tabindex="0" data-evento="{{ t.evento }}" data-etiqueta="{{ t.evento|title }}"
+                    title="Clic para filtrar la tabla por {{ t.evento|title }}">
                   <div class="ms-2 me-auto">
                     <div class="fw-semibold">{{ t.evento|title }}</div>
                     <span class="small text-secondary">{{ t.personas|intcomma }} personas afectadas</span>
@@ -149,28 +152,35 @@
       <div class="row g-3 mb-4" id="graficos">
         <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h3 class="h6 text-uppercase text-secondary mb-0">Tipos de evento más frecuentes</h3>
+            <h3 class="h6 text-uppercase text-secondary mb-0">Tipos de evento más frecuentes <span class="badge rounded-pill text-bg-light border text-primary fw-normal ms-1 badge-interactivo"><i class="bi bi-hand-index-thumb"></i> Interactivo</span></h3>
             <div class="btn-group btn-group-sm" role="group" aria-label="Métrica del gráfico">
               <button type="button" class="btn btn-outline-primary active" data-metrica="eventos">Eventos</button>
               <button type="button" class="btn btn-outline-primary" data-metrica="personas">Personas</button>
             </div>
           </div>
           <div class="chart-box"><canvas id="chart-top" aria-label="Gráfico de barras de los tipos de evento más frecuentes" role="img"></canvas></div>
-          <figcaption class="small text-secondary mt-2">Haz clic en una barra para filtrar la tabla de eventos por ese tipo (otro clic lo quita).</figcaption>
+          <figcaption class="chart-hint mt-2" id="chart-top-hint" aria-live="polite">
+            <i class="bi bi-hand-index-thumb"></i>
+            <span id="chart-top-hint-texto"><strong>Haz clic en una barra</strong> para ver solo esos eventos en la tabla.</span>
+            <span id="chart-top-hint-acciones" class="d-none">
+              <a href="#tabla-eventos" class="link-primary ms-1">Ver tabla <i class="bi bi-arrow-down"></i></a>
+              <button type="button" class="btn btn-link btn-sm p-0 ms-2 align-baseline" id="quitar-filtro-grafico">Quitar filtro</button>
+            </span>
+          </figcaption>
         </div></figure></div>
         <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
-          <h3 class="h6 text-uppercase text-secondary mb-2">Evolución mensual</h3>
+          <h3 class="h6 text-uppercase text-secondary mb-2">Evolución mensual <span class="badge rounded-pill text-bg-light border text-primary fw-normal ms-1 badge-interactivo"><i class="bi bi-hand-index-thumb"></i> Interactivo</span></h3>
           <div class="chart-box"><canvas id="chart-mensual" aria-label="Eventos y personas afectadas por mes" role="img"></canvas></div>
-          <figcaption class="small text-secondary mt-2">Pulsa la leyenda para mostrar u ocultar cada serie.</figcaption>
+          <figcaption class="small text-secondary mt-2">Pasa el cursor para ver los valores; pulsa la leyenda para mostrar u ocultar cada serie.</figcaption>
         </div></figure></div>
         <div class="col-lg-6"><figure class="card shadow-sm h-100 mb-0"><div class="card-body">
-          <h3 class="h6 text-uppercase text-secondary mb-2">Distribución del impacto</h3>
+          <h3 class="h6 text-uppercase text-secondary mb-2">Distribución del impacto <span class="badge rounded-pill text-bg-light border text-primary fw-normal ms-1 badge-interactivo"><i class="bi bi-hand-index-thumb"></i> Interactivo</span></h3>
           <div class="chart-box"><canvas id="chart-distribucion" aria-label="Número de eventos según personas afectadas" role="img"></canvas></div>
-          <figcaption class="small text-secondary mt-2">Cuántos eventos afectaron a 0, 1–9, 10–49… personas.</figcaption>
+          <figcaption class="small text-secondary mt-2">Pasa el cursor sobre una barra para ver cuántos eventos afectaron a 0, 1–9, 10–49… personas.</figcaption>
         </div></figure></div>
       </div>
 
-      <div class="card shadow-sm">
+      <div class="card shadow-sm" id="tabla-eventos">
         <div class="card-body">
           <h3 class="h6 text-uppercase text-secondary">
             Eventos encontrados
@@ -178,6 +188,9 @@
               <span class="fw-normal text-lowercase">(se muestran los {{ max_rows }} más recientes de {{ summary.total_eventos|intcomma }})</span>
             {% endif %}
           </h3>
+          <p class="small text-secondary mb-2" id="tabla-pista">
+            <i class="bi bi-funnel"></i> Puedes filtrar esta tabla por tipo de evento haciendo clic en el Top 5 o en las barras del gráfico.
+          </p>
           <div id="filtro-tabla" class="alert alert-primary py-2 small d-none" role="status">
             Mostrando solo: <strong id="filtro-tabla-evento"></strong>
             {% if summary.total_eventos > max_rows %}(entre los {{ max_rows }} eventos más recientes de la tabla){% endif %}
