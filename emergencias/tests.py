@@ -112,6 +112,15 @@ class IndexViewTests(TempCsvMixin, SimpleTestCase):
         self.assertContains(resp, 'id="chart-top"')
         self.assertEqual(resp.context["chart_data"]["top"]["eventos"], [2, 1])
 
+    def test_filtro_de_graficos_es_visible(self):
+        resp = self.get(self.write_csv(CSV_OK), departamento="ANTIOQUIA", consultar="1")
+        self.assertContains(resp, 'id="chart-top-hint"')
+        self.assertContains(resp, "Haz clic en una barra")
+        self.assertContains(resp, "Interactivo", count=3)
+        # El Top 5 también sirve de filtro: cada evento lleva su clave.
+        self.assertContains(resp, 'class="list-group-item list-group-item-action', count=3)
+        self.assertContains(resp, 'data-evento="INUNDACION" data-etiqueta="Inundacion"')
+
     def test_municipio_de_otro_departamento_no_rompe(self):
         resp = self.get(
             self.write_csv(CSV_OK), departamento="CHOCO", municipio="MEDELLIN", consultar="1"

@@ -86,6 +86,7 @@ Como funcionario municipal, quiero ver estadísticas y gráficos del resultado f
 - Se muestran promedio, mediana, desviación estándar, percentil 90 y máximo de personas afectadas por evento.
 - Se muestran gráficos **interactivos** (no imágenes) calculados desde el CSV filtrado: top de eventos, evolución mensual y distribución de personas afectadas.
 - Los gráficos tienen tooltips, leyenda para mostrar/ocultar series, cambio de métrica (eventos/personas) y clic en una barra para filtrar la tabla.
+- La interactividad es visible sin tener que descubrirla: etiqueta "Interactivo", indicación "Haz clic en una barra", aviso en el tooltip y el Top 5 también filtra la tabla (issue #10).
 - Si no hay datos, el gráfico queda vacío y la página no falla.
 
 **PBI-4 — Prioridad: Low (fuera del Sprint)**
@@ -196,7 +197,7 @@ python manage.py test
     ├── forms.py                   # formulario de filtros y validación
     ├── views.py                   # recibe la solicitud y prepara la respuesta
     ├── urls.py
-    ├── tests.py                   # 12 pruebas automatizadas
+    ├── tests.py                   # 13 pruebas automatizadas
     ├── templates/emergencias/     # base.html, index.html (Bootstrap 5, archivos locales)
     └── static/emergencias/        # styles.css, filtros.js (select dependiente), graficos.js (Chart.js)
         └── vendor/                # Bootstrap 5.3.3, Bootstrap Icons 1.11.3 y Chart.js 4.4.1 (locales, funciona sin internet)
@@ -224,8 +225,9 @@ python manage.py test
 | 13/11/2026 | Página sin recursos externos (Bootstrap, íconos y Chart.js servidos desde `static/`) | 0 recursos externos; 3 gráficos e íconos cargan |
 | 15/11/2026 | **DoD desde `main`** (tras el merge del PR #1, commit `1d19359`): `manage.py check` + `manage.py test` | Sin problemas; 12 pruebas OK |
 | 15/11/2026 | **DoD desde `main`**, manual en navegador | Antioquia → Medellín: 21 eventos, 1.992 personas, 575 familias, 3 gráficos; filtro inválido y municipio de otro departamento muestran aviso (200, sin error); fuente visible; 0 recursos externos |
+| 15/11/2026 | Señales del filtro por clic (#10): manual en navegador + `manage.py test` | Pista visible y etiqueta "Interactivo" en los 3 gráficos; clic en barra filtra (30 eventos de Incendio Forestal) y la pista ofrece "Ver tabla" y "Quitar filtro"; Top 5 filtra con clic y con Enter; sin errores en consola; 13 pruebas OK |
 
-Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, mensaje de sin resultados y error controlado sin archivo.
+Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, señales visibles del filtro de los gráficos, mensaje de sin resultados y error controlado sin archivo.
 
 ---
 
