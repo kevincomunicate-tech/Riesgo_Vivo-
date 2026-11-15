@@ -222,6 +222,8 @@ python manage.py test
 | 13/11/2026 | `iniciar.bat` (doble clic): crea `.venv`, instala dependencias y arranca el servidor | OK: la app responde en http://127.0.0.1:8000/ |
 | 13/11/2026 | `pip install -r requirements.txt` con versiones fijadas + `python manage.py test` dentro de `.venv` | Instalación sin errores; 12 pruebas OK |
 | 13/11/2026 | Página sin recursos externos (Bootstrap, íconos y Chart.js servidos desde `static/`) | 0 recursos externos; 3 gráficos e íconos cargan |
+| 15/11/2026 | **DoD desde `main`** (tras el merge del PR #1, commit `1d19359`): `manage.py check` + `manage.py test` | Sin problemas; 12 pruebas OK |
+| 15/11/2026 | **DoD desde `main`**, manual en navegador | Antioquia → Medellín: 21 eventos, 1.992 personas, 575 familias, 3 gráficos; filtro inválido y municipio de otro departamento muestran aviso (200, sin error); fuente visible; 0 recursos externos |
 
 Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, mensaje de sin resultados y error controlado sin archivo.
 
