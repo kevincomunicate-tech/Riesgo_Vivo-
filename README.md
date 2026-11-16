@@ -123,10 +123,10 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 
 | Integrante | Aporte registrado |
 |---|---|
-| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6; GitHub Project; merge de los PR #1, #9 y #11 |
-| Felipe Andrés Navarrete Calderón | Implementación en las ramas `feature/emergency-filter` (PR #1: proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador), `docs/dod-verification` (PR #9) y `feat/chart-filter-cues` (PR #11, issue #10); issues #7, #8, #10 y #12 |
+| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6; GitHub Project; merge de los PR #1, #9 y #11; responsable de #4 (PBI-2) y #7 (PBI-3) |
+| Felipe Andrés Navarrete Calderón | Implementación en las ramas `feature/emergency-filter` (PR #1: proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador), `docs/dod-verification` (PR #9) y `feat/chart-filter-cues` (PR #11) y `chore/repo-review-fixes` (PR #13, merge incluido); responsable de #2, #5, #6, #8, #10 y #12 |
 
-**Revisión de los PR:** los PR #1, #9 y #11 se integraron en `main` **sin una revisión registrada en GitHub** (ninguna aprobación ni comentario de revisión). Se reconoce como incumplimiento del paso "Revisión" del flujo y de la DoD. A partir del PR de #12 se solicita la revisión formal antes del merge.
+**Revisión de los PR:** los PR #1, #9 y #11 se integraron en `main` **sin una revisión registrada en GitHub** (ninguna aprobación ni comentario de revisión). Se reconoce como incumplimiento del paso "Revisión" del flujo y de la DoD. El PR #13 (issue #12) se abrió con @kevincomunicate-tech como revisor solicitado, pero también se integró **sin aprobación ni comentarios de revisión**. Por eso el issue #12 sigue en *In Review*. Acción de mejora propuesta: activar en GitHub la protección de `main` con 1 aprobación obligatoria, para que no se pueda integrar sin revisión.
 
 
 ### Definition of Done (DoD)
@@ -240,6 +240,7 @@ python manage.py test
 | 15/11/2026 | Señales del filtro por clic (#10): manual en navegador + `manage.py test` | Pista visible y etiqueta "Interactivo" en los 3 gráficos; clic en barra filtra (30 eventos de Incendio Forestal) y la pista ofrece "Ver tabla" y "Quitar filtro"; Top 5 filtra con clic y con Enter; sin errores en consola; 13 pruebas OK |
 | 15/11/2026 | **DoD desde `main`** (tras el merge del PR #11, commit `2d46db1`): `manage.py check` + `manage.py test` + manual en navegador | Sin problemas; 13 pruebas OK; recuadro de ayuda y 3 etiquetas "Interactivo" visibles; Top 5 "Inundación" filtra a 35 filas y "Quitar filtro" restaura 200; sin errores en consola |
 | 15/11/2026 | `manage.py check --deploy` | Antes: W003 (falta CSRF), W004 y W008. Tras #12: W003 corregida; quedan W004, W008 y W016 (HSTS, redirección a HTTPS y cookie CSRF segura), que solo aplican al publicar con HTTPS, fuera del alcance del reto |
+| 15/11/2026 | **DoD desde `main`** (tras el merge del PR #13, commit `aa6204e`): `check` + `test` + workflow `tests` en GitHub + manual en navegador | Sin problemas; 13 pruebas OK; workflow en verde en `main`; Medellín: 21 eventos, 1.992 personas, 3 gráficos; filtro inválido con aviso; sin errores en consola |
 
 Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, señales visibles del filtro de los gráficos, mensaje de sin resultados y error controlado sin archivo.
 
@@ -252,18 +253,18 @@ Flujo esperado: **Issue → Rama → Commit → Pull Request → Revisión → C
 - **Project:** [Riesgo Vivo](https://github.com/users/kevincomunicate-tech/projects/4), con Status **Backlog / Ready / In Progress / In Review / Done** y **Priority** (High, Medium, Low).
 - **Issues:** un issue por PBI con historia de usuario y criterios de aceptación, y uno por tarea técnica.
 
-| Issue | Trabajo | Prioridad | Estado |
-|---|---|---|---|
-| [#2](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/2) | PBI-1: filtrar por departamento y municipio | High | Done |
-| [#4](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/4) | PBI-2: resumen y tipos de evento más frecuentes | High | Done |
-| [#7](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/7) | PBI-3: estadísticas y gráficos interactivos | Medium | Done |
-| [#8](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/8) | PBI-4: comparar dos municipios | Low | Backlog |
-| [#5](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/5) | Estructura base Django + carga de datos | Medium | Done |
-| [#6](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/6) | Plantillas y diseño de la interfaz | Medium | Done |
-| [#10](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/10) | Hacer visible el filtro por clic del gráfico | Medium | Done |
-| [#12](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/12) | Corregir fallas de la revisión del repositorio | Medium | In Progress |
+| Issue | Trabajo | Responsable | Prioridad | Estado |
+|---|---|---|---|---|
+| [#2](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/2) | PBI-1: filtrar por departamento y municipio | Felipe | High | Done |
+| [#4](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/4) | PBI-2: resumen y tipos de evento más frecuentes | Kevin | High | Done |
+| [#7](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/7) | PBI-3: estadísticas y gráficos interactivos | Kevin | Medium | Done |
+| [#8](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/8) | PBI-4: comparar dos municipios | Felipe | Low | Backlog |
+| [#5](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/5) | Estructura base Django + carga de datos | Felipe | Medium | Done |
+| [#6](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/6) | Plantillas y diseño de la interfaz | Felipe | Medium | Done |
+| [#10](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/10) | Hacer visible el filtro por clic del gráfico | Felipe | Medium | Done |
+| [#12](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/12) | Corregir fallas de la revisión del repositorio | Felipe | Medium | In Review |
 
-- **Pull Requests:** [#1](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/1) (aplicación completa), [#9](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/9) (registro de la DoD) y [#11](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/11) (señales del filtro). Cada uno explica qué cambia, por qué, cómo se verificó y usa `Refs #N` (no `Closes`, para que *Done* dependa de verificar la DoD).
+- **Pull Requests:** [#1](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/1) (aplicación completa), [#9](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/9) (registro de la DoD), [#11](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/11) (señales del filtro) y [#13](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/13) (correcciones de la revisión del repositorio). Cada uno explica qué cambia, por qué, cómo se verificó y usa `Refs #N` (no `Closes`, para que *Done* dependa de verificar la DoD).
 - **Ramas y commits en inglés:** `feature/…`, `feat/…`, `docs/…`, `chore/…`; mensajes `feat:`, `docs:`, `chore:`.
 - **Comprobación automática:** el workflow `.github/workflows/tests.yml` ejecuta `manage.py check` y `manage.py test` en cada PR y en cada push a `main`.
 
