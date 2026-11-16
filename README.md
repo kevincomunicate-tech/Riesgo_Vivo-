@@ -239,7 +239,7 @@ python manage.py test
 | 15/11/2026 | **DoD desde `main`**, manual en navegador | Antioquia → Medellín: 21 eventos, 1.992 personas, 575 familias, 3 gráficos; filtro inválido y municipio de otro departamento muestran aviso (200, sin error); fuente visible; 0 recursos externos |
 | 15/11/2026 | Señales del filtro por clic (#10): manual en navegador + `manage.py test` | Pista visible y etiqueta "Interactivo" en los 3 gráficos; clic en barra filtra (30 eventos de Incendio Forestal) y la pista ofrece "Ver tabla" y "Quitar filtro"; Top 5 filtra con clic y con Enter; sin errores en consola; 13 pruebas OK |
 | 15/11/2026 | **DoD desde `main`** (tras el merge del PR #11, commit `2d46db1`): `manage.py check` + `manage.py test` + manual en navegador | Sin problemas; 13 pruebas OK; recuadro de ayuda y 3 etiquetas "Interactivo" visibles; Top 5 "Inundación" filtra a 35 filas y "Quitar filtro" restaura 200; sin errores en consola |
-| 15/11/2026 | `manage.py check --deploy` | 3 advertencias: W003 (CSRF), corregida en #12; W004 y W008 (HTTPS/HSTS), no aplican porque el despliegue está fuera del alcance |
+| 15/11/2026 | `manage.py check --deploy` | Antes: W003 (falta CSRF), W004 y W008. Tras #12: W003 corregida; quedan W004, W008 y W016 (HSTS, redirección a HTTPS y cookie CSRF segura), que solo aplican al publicar con HTTPS, fuera del alcance del reto |
 
 Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, señales visibles del filtro de los gráficos, mensaje de sin resultados y error controlado sin archivo.
 
