@@ -37,6 +37,17 @@ Durante el descubrimiento **solo se evaluó un conjunto de datos** (Emergencias 
 - Incluye las variables de impacto necesarias (personas, familias, fallecidos, heridos, viviendas).
 - Se puede descargar completo en CSV (6.506 registros), sin depender de la API durante la demo.
 
+**Evaluación posterior de otras fuentes (15/11/2026).** Después del Sprint se revisaron en datos.gov.co otros conjuntos relacionados, para corregir esa debilidad. No cambió la elección para este Sprint, pero sí dejó una mejora clara para el siguiente:
+
+| Conjunto | Publica | Registros | Periodo | Columnas | Conclusión |
+|---|---|---|---|---|---|
+| [Emergencias UNGRD V2](https://www.datos.gov.co/d/2343-nuqp) (elegido) | UNGRD | 6.506 | 2025 | 61 | Nacional, por municipio, con impacto; el más reciente |
+| [Emergencias UNGRD2023 - 2024](https://www.datos.gov.co/d/rgre-6ak4) | UNGRD | 16.036 | 2023–2024 | 69 | Mismas columnas clave (FECHA, DEPARTAMENTO, MUNICIPIO, EVENTO, PERSONAS, FAMILIAS) |
+| [Emergencias UNGRD.](https://www.datos.gov.co/d/wwkg-r6te) | UNGRD | 25.857 | 2019–2022 | 71 | Mismas columnas clave; columna DIVIPOLA con otro nombre |
+| [Emergencias atendidas y reportadas - Boyacá](https://www.datos.gov.co/d/xsag-hp7j) | Gobernación de Boyacá | 8.333 | desde 2019 | 8 | Descartado: un solo departamento y sin personas ni familias afectadas |
+
+Los dos conjuntos anteriores de la UNGRD permitirían ampliar el historial a 2019–2025 (unos 48.000 registros) sin cambiar la lógica de la aplicación, porque comparten las columnas que usa `services.py`. Queda como posible elemento del Product Backlog; no se implementó en este Sprint.
+
 ### Funcionalidad principal
 Permitir al usuario filtrar emergencias por departamento y municipio, y visualizar un resumen claro del historial (cantidad de eventos, personas y familias afectadas, tipos de eventos más frecuentes).
 
@@ -112,9 +123,10 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 
 | Integrante | Aporte registrado |
 |---|---|
-| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6 |
-| Felipe Andrés Navarrete Calderón | Implementación en la rama `feature/emergency-filter` (proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador) y apertura del PR #1 |
-| Pendiente | Revisión del PR #1 por un integrante distinto al autor |
+| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6; GitHub Project; merge de los PR #1, #9 y #11 |
+| Felipe Andrés Navarrete Calderón | Implementación en las ramas `feature/emergency-filter` (PR #1: proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador), `docs/dod-verification` (PR #9) y `feat/chart-filter-cues` (PR #11, issue #10); issues #7, #8, #10 y #12 |
+
+**Revisión de los PR:** los PR #1, #9 y #11 se integraron en `main` **sin una revisión registrada en GitHub** (ninguna aprobación ni comentario de revisión). Se reconoce como incumplimiento del paso "Revisión" del flujo y de la DoD. A partir del PR de #12 se solicita la revisión formal antes del merge.
 
 
 ### Definition of Done (DoD)
@@ -226,6 +238,8 @@ python manage.py test
 | 15/11/2026 | **DoD desde `main`** (tras el merge del PR #1, commit `1d19359`): `manage.py check` + `manage.py test` | Sin problemas; 12 pruebas OK |
 | 15/11/2026 | **DoD desde `main`**, manual en navegador | Antioquia → Medellín: 21 eventos, 1.992 personas, 575 familias, 3 gráficos; filtro inválido y municipio de otro departamento muestran aviso (200, sin error); fuente visible; 0 recursos externos |
 | 15/11/2026 | Señales del filtro por clic (#10): manual en navegador + `manage.py test` | Pista visible y etiqueta "Interactivo" en los 3 gráficos; clic en barra filtra (30 eventos de Incendio Forestal) y la pista ofrece "Ver tabla" y "Quitar filtro"; Top 5 filtra con clic y con Enter; sin errores en consola; 13 pruebas OK |
+| 15/11/2026 | **DoD desde `main`** (tras el merge del PR #11, commit `2d46db1`): `manage.py check` + `manage.py test` + manual en navegador | Sin problemas; 13 pruebas OK; recuadro de ayuda y 3 etiquetas "Interactivo" visibles; Top 5 "Inundación" filtra a 35 filas y "Quitar filtro" restaura 200; sin errores en consola |
+| 15/11/2026 | `manage.py check --deploy` | 3 advertencias: W003 (CSRF), corregida en #12; W004 y W008 (HTTPS/HSTS), no aplican porque el despliegue está fuera del alcance |
 
 Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin coincidencias, archivo no encontrado, columnas faltantes, datos de los gráficos, página inicial con fuente y limitaciones, recorrido principal, municipio de otro departamento, departamento inválido, señales visibles del filtro de los gráficos, mensaje de sin resultados y error controlado sin archivo.
 
@@ -235,10 +249,23 @@ Pruebas automatizadas incluidas: carga y limpieza, filtro + resumen + top 5, sin
 
 Flujo esperado: **Issue → Rama → Commit → Pull Request → Revisión → Comprobación → Integración → Verificación de DoD → Done.**
 
-- Un issue por PBI (PBI-1, PBI-2, PBI-3) con contexto y criterios de aceptación; PBI-4 queda en **Backlog**.
-- Project con columnas **Backlog / Ready / In Progress / In Review / Done** y campo **Priority** (High, Medium, Low).
-- Ramas y commits en inglés, p. ej. `feature/emergency-filter`, `feat: add UNGRD emergency filter and summary`.
-- PR con qué cambia, por qué, cómo se verificó y `Refs #N` (no `Closes`, para que *Done* dependa de verificar la DoD).
+- **Project:** [Riesgo Vivo](https://github.com/users/kevincomunicate-tech/projects/4), con Status **Backlog / Ready / In Progress / In Review / Done** y **Priority** (High, Medium, Low).
+- **Issues:** un issue por PBI con historia de usuario y criterios de aceptación, y uno por tarea técnica.
+
+| Issue | Trabajo | Prioridad | Estado |
+|---|---|---|---|
+| [#2](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/2) | PBI-1: filtrar por departamento y municipio | High | Done |
+| [#4](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/4) | PBI-2: resumen y tipos de evento más frecuentes | High | Done |
+| [#7](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/7) | PBI-3: estadísticas y gráficos interactivos | Medium | Done |
+| [#8](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/8) | PBI-4: comparar dos municipios | Low | Backlog |
+| [#5](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/5) | Estructura base Django + carga de datos | Medium | Done |
+| [#6](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/6) | Plantillas y diseño de la interfaz | Medium | Done |
+| [#10](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/10) | Hacer visible el filtro por clic del gráfico | Medium | Done |
+| [#12](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/12) | Corregir fallas de la revisión del repositorio | Medium | In Progress |
+
+- **Pull Requests:** [#1](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/1) (aplicación completa), [#9](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/9) (registro de la DoD) y [#11](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/11) (señales del filtro). Cada uno explica qué cambia, por qué, cómo se verificó y usa `Refs #N` (no `Closes`, para que *Done* dependa de verificar la DoD).
+- **Ramas y commits en inglés:** `feature/…`, `feat/…`, `docs/…`, `chore/…`; mensajes `feat:`, `docs:`, `chore:`.
+- **Comprobación automática:** el workflow `.github/workflows/tests.yml` ejecuta `manage.py check` y `manage.py test` en cada PR y en cada push a `main`.
 
 ---
 
