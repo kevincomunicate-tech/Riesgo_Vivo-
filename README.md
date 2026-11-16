@@ -123,8 +123,8 @@ Sprint Goal + PBI-1, PBI-2 y PBI-3. Plan de implementación:
 
 | Integrante | Aporte registrado |
 |---|---|
-| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6; GitHub Project; merge de los PR #1, #9 y #11; responsable de #4 (PBI-2) y #7 (PBI-3) |
-| Felipe Andrés Navarrete Calderón | Implementación en las ramas `feature/emergency-filter` (PR #1: proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador), `docs/dod-verification` (PR #9) y `feat/chart-filter-cues` (PR #11) y `chore/repo-review-fixes` (PR #13, merge incluido); responsable de #2, #5, #6, #8, #10 y #12 |
+| Kevin Isaza | Descubrimiento y primera versión del README (Product Goal, PBI-1, PBI-2, Sprint Goal, DoD); creación de los issues #2, #4, #5 y #6; GitHub Project; merge de los PR #1, #9 y #11; responsable de #4 (PBI-2), #5 (estructura base), #7 (PBI-3) y #10 (señales del filtro) |
+| Felipe Andrés Navarrete Calderón | Implementación en las ramas `feature/emergency-filter` (PR #1: proyecto Django, datos, filtros, resumen, gráficos, pruebas, iniciador), `docs/dod-verification` (PR #9) y `feat/chart-filter-cues` (PR #11) y `chore/repo-review-fixes` (PR #13, merge incluido); responsable de #2, #6, #8 y #12 |
 
 **Revisión de los PR:** los PR #1, #9 y #11 se integraron en `main` **sin una revisión registrada en GitHub** (ninguna aprobación ni comentario de revisión). Se reconoce como incumplimiento del paso "Revisión" del flujo y de la DoD. El PR #13 (issue #12) se abrió con @kevincomunicate-tech como revisor solicitado, pero también se integró **sin aprobación ni comentarios de revisión**. Por eso el issue #12 sigue en *In Review*. Acción de mejora propuesta: activar en GitHub la protección de `main` con 1 aprobación obligatoria, para que no se pueda integrar sin revisión.
 
@@ -259,9 +259,9 @@ Flujo esperado: **Issue → Rama → Commit → Pull Request → Revisión → C
 | [#4](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/4) | PBI-2: resumen y tipos de evento más frecuentes | Kevin | High | Done |
 | [#7](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/7) | PBI-3: estadísticas y gráficos interactivos | Kevin | Medium | Done |
 | [#8](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/8) | PBI-4: comparar dos municipios | Felipe | Low | Backlog |
-| [#5](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/5) | Estructura base Django + carga de datos | Felipe | Medium | Done |
+| [#5](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/5) | Estructura base Django + carga de datos | Kevin | Medium | Done |
 | [#6](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/6) | Plantillas y diseño de la interfaz | Felipe | Medium | Done |
-| [#10](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/10) | Hacer visible el filtro por clic del gráfico | Felipe | Medium | Done |
+| [#10](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/10) | Hacer visible el filtro por clic del gráfico | Kevin | Medium | Done |
 | [#12](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/issues/12) | Corregir fallas de la revisión del repositorio | Felipe | Medium | In Review |
 
 - **Pull Requests:** [#1](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/1) (aplicación completa), [#9](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/9) (registro de la DoD), [#11](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/11) (señales del filtro) y [#13](https://github.com/kevincomunicate-tech/Riesgo_Vivo-/pull/13) (correcciones de la revisión del repositorio). Cada uno explica qué cambia, por qué, cómo se verificó y usa `Refs #N` (no `Closes`, para que *Done* dependa de verificar la DoD).
