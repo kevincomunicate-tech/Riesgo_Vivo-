@@ -26,7 +26,15 @@
       indexAxis: "y",
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt.format(c.raw)}` } },
+        tooltip: {
+          callbacks: {
+            label: (c) => `${c.dataset.label}: ${fmt.format(c.raw)}`,
+            footer: (items) => (items.length && data.top.keys[items[0].dataIndex] === filtroActivo
+              ? "Clic para quitar el filtro"
+              : "Clic para filtrar la tabla"),
+          },
+          footerColor: "#9ec5fe",
+        },
       },
       scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
       onHover: (e, els) => { e.native.target.style.cursor = els.length ? "pointer" : "default"; },
@@ -57,17 +65,68 @@
     topChart.update();
   }
 
+  // Pista visible bajo el gráfico: pulsa al cargar hasta la primera interacción.
+  const hint = document.getElementById("chart-top-hint");
+  const hintTexto = document.getElementById("chart-top-hint-texto");
+  const hintAcciones = document.getElementById("chart-top-hint-acciones");
+  const hintInicial = hintTexto ? hintTexto.innerHTML : "";
+  hint?.classList.add("pulso");
+
   function filtrarTabla(evento, etiqueta) {
     filtroActivo = evento;
+    hint?.classList.remove("pulso");
+    let visibles = 0;
     document.querySelectorAll("tr[data-evento]").forEach((tr) => {
-      tr.classList.toggle("d-none", !!evento && tr.dataset.evento !== evento);
+      const oculta = !!evento && tr.dataset.evento !== evento;
+      tr.classList.toggle("d-none", oculta);
+      if (!oculta) visibles += 1;
     });
-    const aviso = document.getElementById("filtro-tabla");
-    aviso.classList.toggle("d-none", !evento);
+    document.getElementById("filtro-tabla").classList.toggle("d-none", !evento);
     document.getElementById("filtro-tabla-evento").textContent = etiqueta || "";
+
+    // Top 5: marca el evento activo.
+    document.querySelectorAll(".top-item").forEach((li) => {
+      const activo = li.dataset.evento === evento;
+      li.classList.toggle("activo", activo);
+      li.setAttribute("aria-pressed", activo ? "true" : "false");
+    });
+
+    // Pista del gráfico: explica el estado actual y cómo salir de él.
+    if (hintTexto) {
+      if (evento) {
+        hintTexto.textContent = "";
+        hintTexto.append("Tabla filtrada por ");
+        const b = document.createElement("strong");
+        b.textContent = etiqueta;
+        hintTexto.append(b, ` (${fmt.format(visibles)} eventos).`);
+      } else {
+        hintTexto.innerHTML = hintInicial;
+      }
+      hintAcciones.classList.toggle("d-none", !evento);
+    }
     pintarTop();
   }
-  document.getElementById("quitar-filtro-tabla")?.addEventListener("click", () => filtrarTabla(null));
+
+  const quitar = () => filtrarTabla(null);
+  document.getElementById("quitar-filtro-tabla")?.addEventListener("click", quitar);
+  document.getElementById("quitar-filtro-grafico")?.addEventListener("click", quitar);
+
+  // Top 5 como atajo de filtro (clic o Enter/Espacio).
+  document.querySelectorAll(".top-item").forEach((li) => {
+    li.setAttribute("aria-pressed", "false");
+    const alternar = () => {
+      if (filtroActivo === li.dataset.evento) {
+        quitar();
+      } else {
+        filtrarTabla(li.dataset.evento, li.dataset.etiqueta);
+        document.getElementById("tabla-eventos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+    li.addEventListener("click", alternar);
+    li.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); alternar(); }
+    });
+  });
 
   // --- Evolución mensual: línea de eventos + barras de personas (dos ejes) ---
   new Chart(document.getElementById("chart-mensual"), {

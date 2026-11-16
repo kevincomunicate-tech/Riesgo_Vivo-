@@ -7,3 +7,16 @@ body { background: #f5f7fa; }
 .stats strong { font-size: 1.1rem; }
 figure img { width: 100%; height: auto; }
 .chart-box { position: relative; height: 280px; }
+/* Señales de interactividad (issue #10) */
+.chart-hint {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
+  font-size: .875rem; color: #084298; background: #e7f1ff;
+  border: 1px solid #b6d4fe; border-radius: .5rem; padding: .45rem .7rem;
+}
+.chart-hint.pulso { animation: pulso 1.6s ease-in-out 3; }
+@keyframes pulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(13,110,253,.0); } 50% { box-shadow: 0 0 0 .3rem rgba(13,110,253,.25); } }
+@media (prefers-reduced-motion: reduce) { .chart-hint.pulso { animation: none; } }
+.top-item { cursor: pointer; border-radius: .375rem; }
+.top-item.activo { background: #e7f1ff; box-shadow: inset 3px 0 0 #0d6efd; }
+.top-item:focus-visible { outline: 2px solid #0d6efd; outline-offset: 1px; }
+#tabla-eventos { scroll-margin-top: 1rem; }
