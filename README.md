@@ -273,13 +273,15 @@ Flujo esperado: **Issue → Rama → Commit → Pull Request → Revisión → C
 
 ## 7. Revisión y retrospectiva del Sprint
 
-*(Completar por el equipo después de la demostración; no se registran aquí resultados que no hayan ocurrido.)*
+- **Qué se demostró:** Se desarrolló una aplicación web funcional utilizando Django, que permite consultar información histórica sobre emergencias registradas en Colombia a partir de datos abiertos de la UNGRD. Se verificó el funcionamiento de los filtros por departamento y municipio, la visualización de indicadores estadísticos, las tablas de resultados y los gráficos interactivos. También se realizaron pruebas automatizadas para comprobar el correcto funcionamiento de las principales funcionalidades.
 
-- **Qué se demostró:**
-- **Qué cumplió la DoD y qué quedó pendiente:** PBI-4 (comparar municipios) no se inició.
-- **¿Qué funcionó bien?**
-- **¿Qué obstáculo afectó más el resultado?**
-- **Acción concreta de mejora para el próximo ciclo:**
+- **Qué cumplió la DoD y qué quedó pendiente:** Se completaron las funcionalidades principales correspondientes a PBI-1 (filtrado territorial), PBI-2 (resumen de emergencias) y PBI-3 (estadísticas y gráficos). Se documentaron 13 pruebas automatizadas satisfactorias y se verificó el funcionamiento general de la aplicación. Sin embargo, la Definition of Done no se cumplió completamente debido a la falta de aprobaciones formales en los Pull Requests. Por otra parte, PBI-4 (comparar municipios) no se inició y quedó pendiente para un próximo Sprint.
+
+- **¿Qué funcionó bien?** La organización del trabajo mediante historias de usuario, Issues y Pull Requests facilitó el seguimiento de las actividades. La utilización de Django permitió estructurar el proyecto, mientras que pandas y Chart.js facilitaron el procesamiento y la visualización de los datos. Además, las pruebas realizadas ayudaron a identificar errores y comprobar que las funcionalidades principales respondieran correctamente.
+
+- **¿Qué obstáculo afectó más el resultado?** Uno de los principales obstáculos identificados fue la falta de revisiones formales de código antes de integrar los cambios, lo que impidió cumplir completamente la Definition of Done. También fue necesario priorizar las funcionalidades esenciales del producto, dejando fuera del Sprint la comparación entre municipios.
+
+- **Acción concreta de mejora para el próximo ciclo:** Establecer un proceso obligatorio de revisión y aprobación de Pull Requests antes de integrar cambios en la rama principal, utilizando las reglas de protección de GitHub. Adicionalmente, planificar el desarrollo de PBI-4, fortalecer las pruebas automatizadas y mantener actualizada la documentación y el seguimiento de las tareas.
 
 ---
 
